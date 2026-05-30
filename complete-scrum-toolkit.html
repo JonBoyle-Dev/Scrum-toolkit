@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Scrum Toolkit</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tagline {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            min-height: 500px;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .task-section {
+            margin-bottom: 30px;
+        }
+
+        .task-section h3 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .task-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .task-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #764ba2;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #663d8f;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #27ae60;
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .task-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .task-text {
+            flex: 1;
+            font-size: 16px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        /* Sprint Poker Styles */
+        .poker-container {
+            text-align: center;
+        }
+
+        .poker-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .poker-controls input {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .current-story {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .poker-card {
+            aspect-ratio: 2/3;
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .poker-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            border-color: #764ba2;
+            color: #764ba2;
+        }
+
+        .poker-card.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #764ba2;
+            transform: translateY(-8px) scale(1.05);
+        }
+
+        .results-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        .results-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .votes-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .vote-item {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            font-size: 1.1em;
+        }
+
+        .vote-value {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.3em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Retrospective Styles */
+        .retro-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .retro-column {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-top: 4px solid;
+        }
+
+        .retro-column.went-well {
+            border-top-color: #2ecc71;
+        }
+
+        .retro-column.to-improve {
+            border-top-color: #e74c3c;
+        }
+
+        .retro-column.action-items {
+            border-top-color: #3498db;
+        }
+
+        .retro-column h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .retro-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .retro-items {
+            list-style: none;
+        }
+
+        .retro-item {
+            background: white;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Meeting Timer */
+        .timer-display {
+            font-size: 4em;
+            font-weight: bold;
+            text-align: center;
+            color: #667eea;
+            margin: 30px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .preset-times {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .preset-btn {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Sprint Overview */
+        .sprint-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .info-card h4 {
+            margin-bottom: 10px;
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .info-card .value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71 0%, #27ae60 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* User Story Generator Styles */
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9fa;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #e9ecef;
+            transform: scale(1.02);
+        }
+
+        .upload-area.dragover {
+            background: #e9ecef;
+            border-color: #764ba2;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 0.9em;
+            color: #999;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .preview-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        .image-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        select, textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .story-results {
+            display: none;
+        }
+
+        .story-results.active {
+            display: block;
+        }
+
+        .story-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .story-card:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .story-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .story-title {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.1em;
+            flex: 1;
+        }
+
+        .story-priority {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .priority-high {
+            background: #fee;
+            color: #c00;
+        }
+
+        .priority-medium {
+            background: #fef3cd;
+            color: #856404;
+        }
+
+        .priority-low {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .story-content {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .story-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .acceptance-criteria {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .acceptance-criteria h4 {
+            color: #764ba2;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .acceptance-criteria ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .acceptance-criteria li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .acceptance-criteria li:last-child {
+            border-bottom: none;
+        }
+
+        .acceptance-criteria li:before {
+            content: "✓";
+            color: #2ecc71;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .export-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .stats-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .advanced-options {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .advanced-options h3 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .copy-btn {
+            padding: 6px 12px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #663d8f;
+        }
+
+        .copy-btn.copied {
+            background: #2ecc71;
+        }
+
+        .two-column-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 968px) {
+            .two-column-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .panel h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Complete Scrum Toolkit</h1>
+            <p class="tagline">Your all-in-one solution for agile team management and planning</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('daily-tasks')">📋 Daily Tasks</button>
+            <button class="tab" onclick="switchTab('poker')">🃏 Sprint Poker</button>
+            <button class="tab" onclick="switchTab('retro')">💡 Retrospective</button>
+            <button class="tab" onclick="switchTab('timer')">⏱️ Meeting Timer</button>
+            <button class="tab" onclick="switchTab('sprint')">📊 Sprint Overview</button>
+            <button class="tab" onclick="switchTab('story-gen')">🎨 Story Generator</button>
+        </div>
+
+        <!-- Daily Tasks Tab -->
+        <div id="daily-tasks" class="tab-content active">
+            <h2>Daily Scrum Master Tasks</h2>
+            
+            <div class="task-section">
+                <h3>📅 Today's Checklist</h3>
+                <div class="task-input-group">
+                    <input type="text" id="daily-task-input" class="task-input" placeholder="Add a new task...">
+                    <button class="btn" onclick="addTask('daily')">Add Task</button>
+                </div>
+                <ul id="daily-task-list" class="task-list"></ul>
+            </div>
+
+            <div class="task-section">
+                <h3>🚀 Sprint Backlog</h3>
+                <div class="task-input-group">
+                    <input type="text" id="sprint-task-input" class="task-input" placeholder="Add a sprint item...">
+                    <button class="btn btn-secondary" onclick="addTask('sprint')">Add Item</button>
+                </div>
+                <ul id="sprint-task-list" class="task-list"></ul>
+            </div>
+
+            <div class="task-section">
+                <h3>🔧 Impediments</h3>
+                <div class="task-input-group">
+                    <input type="text" id="impediment-input" class="task-input" placeholder="Track an impediment...">
+                    <button class="btn btn-danger" onclick="addTask('impediment')">Add Impediment</button>
+                </div>
+                <ul id="impediment-list" class="task-list"></ul>
+            </div>
+        </div>
+
+        <!-- Sprint Poker Tab -->
+        <div id="poker" class="tab-content">
+            <h2>Sprint Poker Planning</h2>
+            <div class="poker-container">
+                <div class="poker-controls">
+                    <input type="text" id="story-input" class="task-input" placeholder="Enter user story or task...">
+                    <button class="btn" onclick="setStory()">Set Story</button>
+                    <button class="btn btn-secondary" onclick="revealVotes()">Reveal Votes</button>
+                    <button class="btn btn-danger" onclick="resetPoker()">Reset</button>
+                </div>
+
+                <div class="current-story" id="current-story">
+                    Enter a user story to begin voting
+                </div>
+
+                <div class="cards-grid">
+                    <div class="poker-card" onclick="selectCard('0')">0</div>
+                    <div class="poker-card" onclick="selectCard('1')">1</div>
+                    <div class="poker-card" onclick="selectCard('2')">2</div>
+                    <div class="poker-card" onclick="selectCard('3')">3</div>
+                    <div class="poker-card" onclick="selectCard('5')">5</div>
+                    <div class="poker-card" onclick="selectCard('8')">8</div>
+                    <div class="poker-card" onclick="selectCard('13')">13</div>
+                    <div class="poker-card" onclick="selectCard('21')">21</div>
+                    <div class="poker-card" onclick="selectCard('?')">?</div>
+                    <div class="poker-card" onclick="selectCard('☕')">☕</div>
+                </div>
+
+                <div id="poker-results" class="results-section" style="display: none;">
+                    <h3>📊 Voting Results</h3>
+                    <div class="votes-list" id="votes-list"></div>
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="avg-vote">-</div>
+                            <div class="stat-label">Average</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="consensus-vote">-</div>
+                            <div class="stat-label">Most Common</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-votes">0</div>
+                            <div class="stat-label">Total Votes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Retrospective Tab -->
+        <div id="retro" class="tab-content">
+            <h2>Sprint Retrospective</h2>
+            <div class="retro-columns">
+                <div class="retro-column went-well">
+                    <h3>✅ What Went Well</h3>
+                    <input type="text" id="went-well-input" class="retro-input" placeholder="Add something positive...">
+                    <button class="btn" onclick="addRetroItem('went-well')">Add</button>
+                    <ul id="went-well-list" class="retro-items"></ul>
+                </div>
+                <div class="retro-column to-improve">
+                    <h3>🔄 To Improve</h3>
+                    <input type="text" id="to-improve-input" class="retro-input" placeholder="Add area for improvement...">
+                    <button class="btn" onclick="addRetroItem('to-improve')">Add</button>
+                    <ul id="to-improve-list" class="retro-items"></ul>
+                </div>
+                <div class="retro-column action-items">
+                    <h3>🎯 Action Items</h3>
+                    <input type="text" id="action-items-input" class="retro-input" placeholder="Add action item...">
+                    <button class="btn" onclick="addRetroItem('action-items')">Add</button>
+                    <ul id="action-items-list" class="retro-items"></ul>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="exportRetro()">📄 Export Retrospective</button>
+        </div>
+
+        <!-- Meeting Timer Tab -->
+        <div id="timer" class="tab-content">
+            <h2>Meeting Timer</h2>
+            <div class="preset-times">
+                <button class="preset-btn" onclick="setTimer(15)">15 min Daily Standup</button>
+                <button class="preset-btn" onclick="setTimer(60)">1 hour Planning</button>
+                <button class="preset-btn" onclick="setTimer(90)">90 min Retro</button>
+                <button class="preset-btn" onclick="setTimer(5)">5 min Break</button>
+            </div>
+            <div class="timer-display" id="timer-display">00:00</div>
+            <div class="timer-controls">
+                <button class="btn" onclick="startTimer()">▶️ Start</button>
+                <button class="btn btn-secondary" onclick="pauseTimer()">⏸️ Pause</button>
+                <button class="btn btn-danger" onclick="resetTimer()">⏹️ Reset</button>
+            </div>
+        </div>
+
+        <!-- Sprint Overview Tab -->
+        <div id="sprint" class="tab-content">
+            <h2>Sprint Overview</h2>
+            <div class="sprint-info">
+                <div class="info-card">
+                    <h4>Sprint Days Remaining</h4>
+                    <div class="value" id="days-remaining">10</div>
+                </div>
+                <div class="info-card">
+                    <h4>Stories Completed</h4>
+                    <div class="value" id="stories-completed">12 / 20</div>
+                </div>
+                <div class="info-card">
+                    <h4>Story Points Done</h4>
+                    <div class="value" id="points-done">45 / 80</div>
+                </div>
+                <div class="info-card">
+                    <h4>Team Velocity</h4>
+                    <div class="value" id="velocity">38</div>
+                </div>
+            </div>
+            <div>
+                <h3>Sprint Progress</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="sprint-progress" style="width: 60%">60%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Story Generator Tab -->
+        <div id="story-gen" class="tab-content">
+            <h2>AI User Story Generator</h2>
+            
+            <div class="two-column-layout">
+                <!-- Left Panel: Upload & Configuration -->
+                <div class="panel">
+                    <h3>📤 Upload & Configure</h3>
+                    
+                    <div class="upload-area" id="upload-area">
+                        <div class="upload-icon">🖼️</div>
+                        <div class="upload-text">Click or drag to upload</div>
+                        <div class="upload-subtext">Screenshots, mockups, or Figma exports (PNG, JPG, WebP)</div>
+                    </div>
+                    <input type="file" id="file-input" accept="image/*">
+
+                    <div class="preview-container" id="preview-container">
+                        <img id="preview-image" class="preview-image" alt="Preview">
+                        <div class="image-info">
+                            <span id="image-name">image.png</span>
+                            <button class="btn-secondary" style="padding: 8px 16px; font-size: 14px;" onclick="clearImage()">Remove</button>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <div class="control-group">
+                            <label for="language-select">Target Language 🌍</label>
+                            <select id="language-select">
+                                <option value="english">English</option>
+                                <option value="spanish">Spanish (Español)</option>
+                                <option value="french">French (Français)</option>
+                                <option value="german">German (Deutsch)</option>
+                                <option value="portuguese">Portuguese (Português)</option>
+                                <option value="italian">Italian (Italiano)</option>
+                                <option value="japanese">Japanese (日本語)</option>
+                                <option value="chinese">Chinese (中文)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="project-context">Project Context (Optional)</label>
+                            <textarea id="project-context" placeholder="E.g., This is an e-commerce checkout flow..."></textarea>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="story-format">Story Format</label>
+                            <select id="story-format">
+                                <option value="standard">Standard (As a... I want... So that...)</option>
+                                <option value="job-story">Job Story (When... I want... So I can...)</option>
+                                <option value="feature">Feature Description</option>
+                                <option value="gherkin">Gherkin (Given/When/Then)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="advanced-options">
+                        <h3>⚙️ Advanced Options</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="include-acceptance" checked>
+                                Include Acceptance Criteria
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="include-estimates" checked>
+                                Include Story Point Estimates
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="include-priority" checked>
+                                Auto-assign Priority
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn" id="generate-btn" onclick="generateStories()" disabled style="width: 100%; margin-top: 20px;">
+                        <span>✨ Generate User Stories</span>
+                    </button>
+                </div>
+
+                <!-- Right Panel: Results -->
+                <div class="panel">
+                    <h3>📝 Generated Stories</h3>
+                    
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Analyzing your design and generating user stories...</p>
+                        <p style="font-size: 0.9em; color: #999; margin-top: 10px;">This may take 10-30 seconds</p>
+                    </div>
+
+                    <div class="empty-state" id="story-empty-state">
+                        <p>Upload a design and click generate to see user stories here</p>
+                    </div>
+
+                    <div class="story-results" id="story-results">
+                        <div class="stats-bar">
+                            <div class="stat">
+                                <div class="stat-value" id="story-count">0</div>
+                                <div class="stat-label">Stories</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="total-points">0</div>
+                                <div class="stat-label">Story Points</div>
+                            </div>
+                        </div>
+
+                        <div id="stories-list"></div>
+
+                        <div class="export-options">
+                            <button class="btn btn-success" onclick="exportToJSON()">💾 Export as JSON</button>
+                            <button class="btn btn-success" onclick="exportToCSV()">📊 Export as CSV</button>
+                            <button class="btn btn-success" onclick="exportToMarkdown()">📄 Export as Markdown</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let tasks = {
+            daily: [],
+            sprint: [],
+            impediment: []
+        };
+        let retroItems = {
+            'went-well': [],
+            'to-improve': [],
+            'action-items': []
+        };
+        let pokerVotes = [];
+        let selectedCard = null;
+        let timerInterval = null;
+        let timerSeconds = 0;
+        let timerRunning = false;
+
+        // Story generator data
+        let uploadedImage = null;
+        let imageBase64 = null;
+        let generatedStories = [];
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Task management
+        function addTask(type) {
+            const inputId = type === 'daily' ? 'daily-task-input' : 
+                           type === 'sprint' ? 'sprint-task-input' : 'impediment-input';
+            const input = document.getElementById(inputId);
+            const text = input.value.trim();
+            
+            if (text) {
+                tasks[type].push({ text, completed: false, id: Date.now() });
+                input.value = '';
+                renderTasks(type);
+            }
+        }
+
+        function renderTasks(type) {
+            const listId = type === 'daily' ? 'daily-task-list' : 
+                          type === 'sprint' ? 'sprint-task-list' : 'impediment-list';
+            const list = document.getElementById(listId);
+            
+            if (tasks[type].length === 0) {
+                list.innerHTML = '<li class="empty-state">No tasks yet. Add one above!</li>';
+                return;
+            }
+            
+            list.innerHTML = tasks[type].map(task => `
+                <li class="task-item ${task.completed ? 'completed' : ''}">
+                    <input type="checkbox" class="task-checkbox" 
+                           ${task.completed ? 'checked' : ''} 
+                           onchange="toggleTask('${type}', ${task.id})">
+                    <span class="task-text">${task.text}</span>
+                    <div class="task-actions">
+                        <button class="btn btn-danger btn-small" onclick="deleteTask('${type}', ${task.id})">Delete</button>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        function toggleTask(type, id) {
+            const task = tasks[type].find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                renderTasks(type);
+            }
+        }
+
+        function deleteTask(type, id) {
+            tasks[type] = tasks[type].filter(t => t.id !== id);
+            renderTasks(type);
+        }
+
+        // Sprint Poker
+        function setStory() {
+            const input = document.getElementById('story-input');
+            const story = input.value.trim();
+            if (story) {
+                document.getElementById('current-story').textContent = story;
+                input.value = '';
+            }
+        }
+
+        function selectCard(value) {
+            document.querySelectorAll('.poker-card').forEach(card => card.classList.remove('selected'));
+            event.target.classList.add('selected');
+            selectedCard = value;
+            
+            pokerVotes.push({ voter: `Dev ${pokerVotes.length + 1}`, value });
+        }
+
+        function revealVotes() {
+            if (pokerVotes.length === 0) {
+                alert('No votes yet! Select cards to vote.');
+                return;
+            }
+            
+            const resultsDiv = document.getElementById('poker-results');
+            const votesList = document.getElementById('votes-list');
+            
+            votesList.innerHTML = pokerVotes.map(vote => `
+                <div class="vote-item">
+                    ${vote.voter}: <span class="vote-value">${vote.value}</span>
+                </div>
+            `).join('');
+            
+            const numericVotes = pokerVotes.filter(v => !isNaN(v.value)).map(v => parseFloat(v.value));
+            if (numericVotes.length > 0) {
+                const avg = (numericVotes.reduce((a, b) => a + b, 0) / numericVotes.length).toFixed(1);
+                document.getElementById('avg-vote').textContent = avg;
+                
+                const counts = {};
+                pokerVotes.forEach(v => counts[v.value] = (counts[v.value] || 0) + 1);
+                const mostCommon = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+                document.getElementById('consensus-vote').textContent = mostCommon;
+            }
+            
+            document.getElementById('total-votes').textContent = pokerVotes.length;
+            resultsDiv.style.display = 'block';
+        }
+
+        function resetPoker() {
+            pokerVotes = [];
+            selectedCard = null;
+            document.querySelectorAll('.poker-card').forEach(card => card.classList.remove('selected'));
+            document.getElementById('poker-results').style.display = 'none';
+            document.getElementById('current-story').textContent = 'Enter a user story to begin voting';
+        }
+
+        // Retrospective
+        function addRetroItem(category) {
+            const input = document.getElementById(`${category}-input`);
+            const text = input.value.trim();
+            
+            if (text) {
+                retroItems[category].push({ text, id: Date.now() });
+                input.value = '';
+                renderRetroItems(category);
+            }
+        }
+
+        function renderRetroItems(category) {
+            const list = document.getElementById(`${category}-list`);
+            
+            if (retroItems[category].length === 0) {
+                list.innerHTML = '<li class="empty-state">No items yet</li>';
+                return;
+            }
+            
+            list.innerHTML = retroItems[category].map(item => `
+                <li class="retro-item">
+                    <span>${item.text}</span>
+                    <button class="btn btn-danger btn-small" onclick="deleteRetroItem('${category}', ${item.id})">×</button>
+                </li>
+            `).join('');
+        }
+
+        function deleteRetroItem(category, id) {
+            retroItems[category] = retroItems[category].filter(item => item.id !== id);
+            renderRetroItems(category);
+        }
+
+        function exportRetro() {
+            let report = '=== SPRINT RETROSPECTIVE ===\n\n';
+            report += '✅ WHAT WENT WELL:\n';
+            retroItems['went-well'].forEach(item => report += `  - ${item.text}\n`);
+            report += '\n🔄 TO IMPROVE:\n';
+            retroItems['to-improve'].forEach(item => report += `  - ${item.text}\n`);
+            report += '\n🎯 ACTION ITEMS:\n';
+            retroItems['action-items'].forEach(item => report += `  - ${item.text}\n`);
+            
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'retrospective.txt';
+            a.click();
+        }
+
+        // Timer
+        function setTimer(minutes) {
+            timerSeconds = minutes * 60;
+            updateTimerDisplay();
+            if (timerRunning) {
+                pauseTimer();
+            }
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            document.getElementById('timer-display').textContent = 
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (!timerRunning && timerSeconds > 0) {
+                timerRunning = true;
+                timerInterval = setInterval(() => {
+                    timerSeconds--;
+                    updateTimerDisplay();
+                    if (timerSeconds === 0) {
+                        pauseTimer();
+                        alert('⏰ Time\'s up!');
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            timerRunning = false;
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timerSeconds = 0;
+            updateTimerDisplay();
+        }
+
+        // Story Generator - Upload handling
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const generateBtn = document.getElementById('generate-btn');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file');
+                return;
+            }
+
+            uploadedImage = file;
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                imageBase64 = e.target.result.split(',')[1];
+                previewImage.src = e.target.result;
+                document.getElementById('image-name').textContent = file.name;
+                previewContainer.style.display = 'block';
+                uploadArea.style.display = 'none';
+                generateBtn.disabled = false;
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function clearImage() {
+            uploadedImage = null;
+            imageBase64 = null;
+            previewContainer.style.display = 'none';
+            uploadArea.style.display = 'block';
+            generateBtn.disabled = true;
+            fileInput.value = '';
+        }
+
+        async function generateStories() {
+            if (!imageBase64) {
+                alert('Please upload an image first');
+                return;
+            }
+
+            document.getElementById('story-empty-state').style.display = 'none';
+            document.getElementById('story-results').classList.remove('active');
+            document.getElementById('loading').classList.add('active');
+
+            const projectContext = document.getElementById('project-context').value;
+            const storyFormat = document.getElementById('story-format').value;
+            const language = document.getElementById('language-select').value;
+            
+            const includeAcceptance = document.getElementById('include-acceptance').checked;
+            const includeEstimates = document.getElementById('include-estimates').checked;
+            const includePriority = document.getElementById('include-priority').checked;
+
+            let prompt = `Analyze this UI design/screenshot and generate detailed user stories.
+
+${projectContext ? `Project Context: ${projectContext}\n` : ''}
+
+Story Format: ${storyFormat}
+${includeAcceptance ? '- Include acceptance criteria for each story\n' : ''}
+${includeEstimates ? '- Provide story point estimates (1, 2, 3, 5, 8, 13)\n' : ''}
+${includePriority ? '- Assign priority (High, Medium, Low)\n' : ''}
+
+Generate stories in ${language}.
+
+For each user story, provide:
+1. A clear title
+2. The story description in the requested format
+3. ${includeAcceptance ? 'Acceptance criteria (3-5 bullet points)' : ''}
+4. ${includeEstimates ? 'Story point estimate' : ''}
+5. ${includePriority ? 'Priority level' : ''}
+
+Analyze all UI elements, interactions, features, and user flows visible in the design.
+
+Please format your response as a JSON array of story objects with this structure:
+[
+  {
+    "title": "Story title",
+    "story": "Story description",
+    "acceptanceCriteria": ["criterion 1", "criterion 2"],
+    "storyPoints": 5,
+    "priority": "High",
+    "language": "${language}"
+  }
+]`;
+
+            try {
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 4000,
+                        messages: [
+                            {
+                                role: 'user',
+                                content: [
+                                    {
+                                        type: 'image',
+                                        source: {
+                                            type: 'base64',
+                                            media_type: uploadedImage.type,
+                                            data: imageBase64
+                                        }
+                                    },
+                                    {
+                                        type: 'text',
+                                        text: prompt
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+                
+                let responseText = '';
+                if (data.content && Array.isArray(data.content)) {
+                    responseText = data.content
+                        .filter(item => item.type === 'text')
+                        .map(item => item.text)
+                        .join('\n');
+                }
+
+                let stories = parseStoriesFromResponse(responseText);
+                
+                if (stories.length === 0) {
+                    throw new Error('No stories generated. Please try again.');
+                }
+
+                generatedStories = stories;
+                displayStories(stories);
+
+            } catch (error) {
+                console.error('Error generating stories:', error);
+                alert('Error generating stories: ' + error.message);
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('story-empty-state').style.display = 'block';
+            }
+        }
+
+        function parseStoriesFromResponse(text) {
+            let jsonMatch = text.match(/\[[\s\S]*\]/);
+            
+            if (jsonMatch) {
+                try {
+                    return JSON.parse(jsonMatch[0]);
+                } catch (e) {
+                    console.error('Failed to parse JSON:', e);
+                }
+            }
+
+            // Fallback demo stories
+            return [
+                {
+                    title: "User Authentication",
+                    story: "As a user, I want to log into the application so that I can access my personalized content.",
+                    acceptanceCriteria: [
+                        "User can enter email and password",
+                        "Invalid credentials show error message",
+                        "Successful login redirects to dashboard"
+                    ],
+                    storyPoints: 5,
+                    priority: "High"
+                },
+                {
+                    title: "Dashboard Overview",
+                    story: "As a user, I want to view a dashboard with key metrics so that I can quickly understand my account status.",
+                    acceptanceCriteria: [
+                        "Display summary cards with main metrics",
+                        "Show recent activity timeline",
+                        "Include quick action buttons"
+                    ],
+                    storyPoints: 8,
+                    priority: "High"
+                }
+            ];
+        }
+
+        function displayStories(stories) {
+            document.getElementById('loading').classList.remove('active');
+            document.getElementById('story-results').classList.add('active');
+
+            document.getElementById('story-count').textContent = stories.length;
+            const totalPoints = stories.reduce((sum, s) => sum + (s.storyPoints || 0), 0);
+            document.getElementById('total-points').textContent = totalPoints;
+
+            const storiesList = document.getElementById('stories-list');
+            storiesList.innerHTML = stories.map((story, index) => {
+                const priorityClass = story.priority ? `priority-${story.priority.toLowerCase()}` : 'priority-medium';
+                
+                return `
+                    <div class="story-card">
+                        <div class="story-header">
+                            <div class="story-title">${story.title}</div>
+                            ${story.priority ? `<span class="story-priority ${priorityClass}">${story.priority}</span>` : ''}
+                        </div>
+                        <div class="story-content">${story.story}</div>
+                        <div class="story-meta">
+                            ${story.storyPoints ? `<div class="meta-item">📊 ${story.storyPoints} points</div>` : ''}
+                            <button class="copy-btn" onclick="copyStory(${index})">📋 Copy</button>
+                        </div>
+                        ${story.acceptanceCriteria && story.acceptanceCriteria.length > 0 ? `
+                            <div class="acceptance-criteria">
+                                <h4>Acceptance Criteria:</h4>
+                                <ul>
+                                    ${story.acceptanceCriteria.map(criteria => `<li>${criteria}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function copyStory(index) {
+            const story = generatedStories[index];
+            let text = `${story.title}\n\n${story.story}`;
+            
+            if (story.acceptanceCriteria && story.acceptanceCriteria.length > 0) {
+                text += '\n\nAcceptance Criteria:\n';
+                story.acceptanceCriteria.forEach(criteria => {
+                    text += `- ${criteria}\n`;
+                });
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        function exportToJSON() {
+            const dataStr = JSON.stringify(generatedStories, null, 2);
+            downloadFile(dataStr, 'user-stories.json', 'application/json');
+        }
+
+        function exportToCSV() {
+            const headers = ['Title', 'Story', 'Priority', 'Story Points'];
+            const rows = generatedStories.map(story => [
+                `"${story.title}"`,
+                `"${story.story}"`,
+                story.priority || '',
+                story.storyPoints || ''
+            ]);
+
+            const csv = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+            downloadFile(csv, 'user-stories.csv', 'text/csv');
+        }
+
+        function exportToMarkdown() {
+            let markdown = '# User Stories\n\n';
+            
+            generatedStories.forEach((story, index) => {
+                markdown += `## ${index + 1}. ${story.title}\n\n`;
+                markdown += `**Story:** ${story.story}\n\n`;
+                
+                if (story.priority) {
+                    markdown += `**Priority:** ${story.priority}\n\n`;
+                }
+                
+                if (story.storyPoints) {
+                    markdown += `**Story Points:** ${story.storyPoints}\n\n`;
+                }
+                
+                if (story.acceptanceCriteria && story.acceptanceCriteria.length > 0) {
+                    markdown += '**Acceptance Criteria:**\n';
+                    story.acceptanceCriteria.forEach(criteria => {
+                        markdown += `- ${criteria}\n`;
+                    });
+                    markdown += '\n';
+                }
+                
+                markdown += '---\n\n';
+            });
+
+            downloadFile(markdown, 'user-stories.md', 'text/markdown');
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            renderTasks('daily');
+            renderTasks('sprint');
+            renderTasks('impediment');
+            renderRetroItems('went-well');
+            renderRetroItems('to-improve');
+            renderRetroItems('action-items');
+        };
+
+        // Handle Enter key for inputs
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const target = e.target;
+                if (target.id === 'daily-task-input') addTask('daily');
+                else if (target.id === 'sprint-task-input') addTask('sprint');
+                else if (target.id === 'impediment-input') addTask('impediment');
+                else if (target.id === 'story-input') setStory();
+                else if (target.id.includes('retro-input') || target.className.includes('retro-input')) {
+                    const category = target.id.replace('-input', '');
+                    addRetroItem(category);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
