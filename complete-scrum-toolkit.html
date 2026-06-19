@@ -208,6 +208,47 @@ textarea{resize:vertical;min-height:76px}
 .mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}
 .text-muted{color:var(--text-muted);font-size:.86em}
 .text-center{text-align:center}
+
+/* ── QUIZ ── */
+.badge-display{text-align:center;padding:20px 10px}
+.badge-icon{font-size:4em;margin-bottom:8px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15))}
+.badge-gold .badge-icon{filter:drop-shadow(0 4px 12px rgba(255,193,7,.5))}
+.badge-silver .badge-icon{filter:drop-shadow(0 4px 12px rgba(158,158,158,.5))}
+.badge-bronze .badge-icon{filter:drop-shadow(0 4px 12px rgba(176,98,48,.5))}
+.badge-label{font-size:1.4em;font-weight:700;margin-bottom:4px}
+.badge-gold .badge-label{color:#b8860b}
+.badge-silver .badge-label{color:#607d8b}
+.badge-bronze .badge-label{color:#8d4e10}
+.badge-sublabel{font-size:.82em;color:var(--text-muted)}
+.badge-expiry{font-size:.78em;padding:3px 10px;border-radius:10px;display:inline-block;margin-top:6px}
+.badge-expiry.ok{background:#d4edda;color:#155724}
+.badge-expiry.warn{background:#fef3cd;color:#856404}
+.badge-expiry.expired{background:#fee;color:#c00}
+.quiz-progress{display:flex;gap:6px;justify-content:center;margin:14px 0}
+.quiz-progress-dot{width:10px;height:10px;border-radius:50%;background:var(--bg-medium);transition:background .2s}
+.quiz-progress-dot.done{background:var(--success)}
+.quiz-progress-dot.correct{background:var(--success)}
+.quiz-progress-dot.wrong{background:var(--danger)}
+.quiz-progress-dot.current{background:var(--primary)}
+.quiz-question{font-size:1.1em;font-weight:600;color:var(--text);margin-bottom:18px;line-height:1.5}
+.quiz-cat{font-size:.73em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--primary);margin-bottom:8px}
+.quiz-options{display:flex;flex-direction:column;gap:9px}
+.quiz-option{padding:12px 16px;border:2px solid var(--border);border-radius:var(--radius-sm);background:#fff;text-align:left;cursor:pointer;font-size:.92em;transition:all .18s;font-family:inherit}
+.quiz-option:hover:not(:disabled){border-color:var(--primary);background:#e8eaff}
+.quiz-option.correct{border-color:var(--success);background:#d4edda;color:#155724;font-weight:600}
+.quiz-option.wrong{border-color:var(--danger);background:#fee;color:#c00}
+.quiz-option.reveal-correct{border-color:var(--success);background:#d4edda;color:#155724}
+.quiz-option:disabled{cursor:default}
+.quiz-explain{background:var(--bg-light);border-left:4px solid var(--primary);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.85em;margin-top:12px;line-height:1.55}
+.quiz-result-card{text-align:center;padding:24px}
+.quiz-result-score{font-size:3.5em;font-weight:700;color:var(--primary);line-height:1}
+.quiz-result-label{font-size:1.1em;font-weight:600;margin:8px 0 4px}
+.quiz-streak{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.85em;color:var(--text-muted);margin-top:8px}
+.dash-badge-mini{display:flex;align-items:center;gap:10px;background:var(--bg-light);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:6px}
+.dash-badge-mini .mini-icon{font-size:1.8em;line-height:1}
+.dash-badge-mini .mini-info{flex:1}
+.dash-badge-mini .mini-name{font-weight:700;font-size:.9em}
+.dash-badge-mini .mini-sub{font-size:.78em;color:var(--text-muted)}
 </style>
 </head>
 <body>
@@ -253,6 +294,7 @@ textarea{resize:vertical;min-height:76px}
       <button class="tab-btn" data-tab="poker">🃏 Sprint Poker</button>
       <button class="tab-btn" data-tab="timer">⏱️ Timer</button>
       <button class="tab-btn" data-tab="reference">📖 Reference</button>
+      <button class="tab-btn" data-tab="quiz">🧠 Quiz Me</button>
 
       <div class="sidebar-footer">2020 Scrum Guide &bull; All data local</div>
     </aside>
@@ -728,6 +770,38 @@ textarea{resize:vertical;min-height:76px}
         </div>
       </div>
 
+      <!-- QUIZ ME -->
+      <div id="tab-quiz" class="tab-panel">
+        <h2>🧠 Quiz Me</h2>
+        <p class="text-muted mb-12">Answer 10 questions a week to keep your badge active. Badges expire after 7 days.</p>
+
+        <div class="two-col" style="gap:14px;margin-bottom:18px">
+          <!-- Badge status -->
+          <div id="quiz-badge-panel" class="card" style="text-align:center"></div>
+          <!-- Stats -->
+          <div class="card">
+            <h3 style="margin-bottom:12px">📊 Your Stats</h3>
+            <div id="quiz-stats-panel"></div>
+          </div>
+        </div>
+
+        <!-- Quiz area -->
+        <div id="quiz-area">
+          <div id="quiz-start" class="text-center" style="padding:24px">
+            <p style="font-size:1.05em;margin-bottom:16px">Ready for your weekly check-in? 10 random questions across Scrum, Agile &amp; Product Ownership.</p>
+            <button class="btn btn-primary" style="font-size:1em;padding:12px 28px" onclick="startQuiz()">▶ Start Quiz</button>
+          </div>
+          <div id="quiz-question-area" style="display:none"></div>
+          <div id="quiz-result-area" style="display:none"></div>
+        </div>
+
+        <!-- History -->
+        <div class="section mt-16">
+          <div class="section-header"><h3>📅 Session History</h3></div>
+          <div id="quiz-history-list"></div>
+        </div>
+      </div>
+
     </main>
   </div><!-- /.app-shell -->
 </div><!-- /.container -->
@@ -764,6 +838,7 @@ function onTab(t){
   if(t==='timer'){renderTimerPresets();}
   if(t==='stories'){loadApiKeyStatus();}
   if(t==='reference'){renderSkills();renderSkillsSummary();}
+  if(t==='quiz'){renderQuizTab();}
 }
 
 // ── ROLE ──
@@ -869,6 +944,8 @@ function renderDashboard(){
   const actions=quickActions[currentRole]||quickActions.sm;
   const actionsHtml=`<div class="dash-section"><h3>Quick Actions</h3><div class="quick-actions">${actions.map(a=>`<button class="quick-btn" onclick="switchTab('${a.tab}')">${a.label}</button>`).join('')}</div></div>`;
 
+  const badgeWidget=getDashBadgeHtml();
+
   el.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px">
       <div>
@@ -894,6 +971,7 @@ function renderDashboard(){
       <div>${leftCol}</div>
       <div>${rightCol}</div>
     </div>
+    <div class="dash-section"><h3>🎖️ Badge Status</h3>${badgeWidget}</div>
     ${actionsHtml}
   `;
 }
@@ -1395,6 +1473,342 @@ function saveSkill(key,level){const scores=ld(K.skills,{});scores[key]=level;sv(
 function renderSkillsSummary(){
   const scores=ld(K.skills,{});const vals=Object.values(scores);const c={Beginner:0,Intermediate:0,Advanced:0};vals.forEach(v=>{if(c[v]!==undefined)c[v]++;});
   document.getElementById('skills-summary').innerHTML=`<div class="skill-level-count beginner"><div class="count">${c.Beginner}</div><div class="lbl">Beginner</div></div><div class="skill-level-count intermediate"><div class="count">${c.Intermediate}</div><div class="lbl">Intermediate</div></div><div class="skill-level-count advanced"><div class="count">${c.Advanced}</div><div class="lbl">Advanced</div></div><div class="skill-level-count" style="background:var(--bg-light)"><div class="count">${SKILLS.length-vals.length}</div><div class="lbl">Not Rated</div></div>`;
+}
+
+// ── QUIZ ──
+K.quizBadge='scrum_quiz_badge';
+K.quizHistory='scrum_quiz_history';
+
+const QUIZ_BANK=[
+  // SCRUM FRAMEWORK
+  {cat:'Scrum Framework',q:'What is the maximum length of a Sprint?',o:['2 weeks','4 weeks','1 month','3 months'],a:2,e:'The 2020 Scrum Guide states a Sprint may be up to one calendar month long.'},
+  {cat:'Scrum Framework',q:'Who is responsible for the Product Backlog?',o:['Scrum Master','Developers','Product Owner','Stakeholders'],a:2,e:'The Product Owner is solely accountable for managing the Product Backlog.'},
+  {cat:'Scrum Framework',q:'What are the three pillars of empiricism in Scrum?',o:['Planning, Execution, Review','Transparency, Inspection, Adaptation','Vision, Mission, Goals','Commitment, Focus, Openness'],a:1,e:'Scrum is founded on empiricism: Transparency, Inspection, and Adaptation.'},
+  {cat:'Scrum Framework',q:'Who can cancel a Sprint?',o:['Scrum Master','Any team member','Product Owner','Stakeholders'],a:2,e:'Only the Product Owner has the authority to cancel a Sprint.'},
+  {cat:'Scrum Framework',q:'What replaced the term "Development Team" in the 2020 Scrum Guide?',o:['Engineering Team','Scrum Team','Developers','Delivery Team'],a:2,e:'The 2020 Scrum Guide replaced "Development Team" with simply "Developers".'},
+  {cat:'Scrum Framework',q:'How many Scrum values are there?',o:['3','4','5','6'],a:2,e:'Scrum has five values: Commitment, Focus, Openness, Respect, and Courage.'},
+  {cat:'Scrum Framework',q:'What does "self-managing" mean for a Scrum Team?',o:['The team works without a manager','The team decides internally who does what, when, and how','The team never needs coaching','The team manages its own budget'],a:1,e:'Self-managing means the Scrum Team decides internally how to accomplish its work.'},
+  {cat:'Scrum Framework',q:'What is the recommended size of a Scrum Team?',o:['3–5 people','5–10 people','10 or fewer','No limit'],a:2,e:'The 2020 Scrum Guide recommends 10 or fewer people on a Scrum Team.'},
+  {cat:'Scrum Framework',q:'Which Scrum value means members are open about their work and challenges?',o:['Courage','Respect','Openness','Commitment'],a:2,e:'Openness means the Scrum Team and stakeholders are open about work and challenges.'},
+  {cat:'Scrum Framework',q:'Can a Scrum Master also be a Developer on the same team?',o:['Never','Yes, though it can reduce effectiveness','Only in small teams','Only with PO approval'],a:1,e:'A Scrum Master can be a Developer, but the dual role may reduce focus and effectiveness.'},
+  {cat:'Scrum Framework',q:'What does cross-functional mean in Scrum?',o:['The team spans multiple departments','The team has all skills needed to create value each Sprint','Team members have multiple job titles','Developers can act as Product Owners'],a:1,e:'Cross-functional means the team collectively has all the skills needed to create a Done Increment.'},
+  {cat:'Scrum Framework',q:'Which Scrum Guide year introduced the concept of Product Goal?',o:['2017','2018','2020','2022'],a:2,e:'The Product Goal was introduced in the 2020 Scrum Guide.'},
+  {cat:'Scrum Framework',q:'Scrum is described as:',o:['A methodology','A framework','A process','A project management tool'],a:1,e:'Scrum is a lightweight framework, not a methodology or process.'},
+  {cat:'Scrum Framework',q:'Who estimates the work in Scrum?',o:['Product Owner','Scrum Master','Developers','Project Manager'],a:2,e:'Developers are the ones doing the work and therefore do the estimating.'},
+  {cat:'Scrum Framework',q:'What is the Sprint Goal?',o:['A list of features to deliver','A single objective for the Sprint that provides focus','The Definition of Done for the Sprint','A measure of team velocity'],a:1,e:'The Sprint Goal is a single objective for the Sprint, created during Sprint Planning.'},
+
+  // SPRINT EVENTS
+  {cat:'Sprint Events',q:'What is the timebox for Sprint Planning for a 4-week Sprint?',o:['4 hours','6 hours','8 hours','12 hours'],a:2,e:'Sprint Planning is timeboxed to 8 hours for a one-month Sprint.'},
+  {cat:'Sprint Events',q:'What is the timebox for the Daily Scrum?',o:['30 minutes','20 minutes','15 minutes','10 minutes'],a:2,e:'The Daily Scrum is timeboxed to 15 minutes.'},
+  {cat:'Sprint Events',q:'What is the timebox for Sprint Review for a 2-week Sprint?',o:['1 hour','2 hours','3 hours','4 hours'],a:1,e:'Sprint Review for a 2-week Sprint is timeboxed to 2 hours.'},
+  {cat:'Sprint Events',q:'What is the timebox for Sprint Retrospective for a 4-week Sprint?',o:['1.5 hours','2 hours','3 hours','4 hours'],a:2,e:'The Sprint Retrospective is timeboxed to 3 hours for a one-month Sprint.'},
+  {cat:'Sprint Events',q:'What are the three topics of Sprint Planning?',o:['Who, What, How','Why, What, How','Vision, Goal, Tasks','Goal, Backlog, Review'],a:1,e:'Sprint Planning addresses: Why is this Sprint valuable? What can be Done? How will the work get done?'},
+  {cat:'Sprint Events',q:'Who attends the Daily Scrum?',o:['Entire Scrum Team','Developers only (others may observe)','Scrum Master and Developers','Product Owner and Developers'],a:1,e:'The Daily Scrum is for Developers. Others may attend but do not actively participate.'},
+  {cat:'Sprint Events',q:'What is the purpose of the Sprint Review?',o:['To review team performance','To inspect the Increment and adapt the Product Backlog','To plan the next Sprint','To demo to management'],a:1,e:'The Sprint Review inspects the Sprint outcome and determines future adaptations to the Product Backlog.'},
+  {cat:'Sprint Events',q:'What is the primary output of the Sprint Retrospective?',o:['A bug report','A new Sprint Backlog','A plan for improving quality and effectiveness','A velocity chart'],a:2,e:'The Retrospective produces a plan for increasing quality and effectiveness in the next Sprint.'},
+  {cat:'Sprint Events',q:'How often is the Daily Scrum held?',o:['Twice a week','Every working day of the Sprint','Weekly','At the Scrum Master\'s discretion'],a:1,e:'The Daily Scrum is held every working day of the Sprint at the same time and place.'},
+  {cat:'Sprint Events',q:'Can a Sprint be extended if the work is not finished?',o:['Yes, with PO approval','Yes, if the team agrees','No — Sprints end at the fixed date','Only for the first Sprint'],a:2,e:'Sprints have a fixed end date. They are never extended; unfinished work returns to the Product Backlog.'},
+  {cat:'Sprint Events',q:'What does the Sprint Review produce?',o:['A report for management','A revised Product Backlog','A list of bugs','A team performance score'],a:1,e:'The Sprint Review results in a revised Product Backlog reflecting what to do next.'},
+  {cat:'Sprint Events',q:'Who facilitates the Sprint Retrospective?',o:['Product Owner','Lead Developer','Scrum Master','A neutral third party'],a:2,e:'The Scrum Master facilitates the Sprint Retrospective.'},
+  {cat:'Sprint Events',q:'What is the first thing established in Sprint Planning?',o:['The Sprint Backlog items','Why the Sprint is valuable (Sprint Goal)','How the work will be done','The team capacity'],a:1,e:'Sprint Planning starts with the Product Owner proposing how the Sprint creates value — leading to the Sprint Goal.'},
+  {cat:'Sprint Events',q:'Is Backlog Refinement an official Scrum event?',o:['Yes','No — it is an ongoing activity','Only in larger teams','Yes, it was added in 2020'],a:1,e:'Backlog Refinement is an ongoing activity, not an official Scrum event.'},
+
+  // ARTIFACTS & COMMITMENTS
+  {cat:'Artifacts & Commitments',q:'What is the commitment associated with the Product Backlog?',o:['Definition of Done','Sprint Goal','Product Goal','Release Plan'],a:2,e:'The Product Goal is the commitment for the Product Backlog.'},
+  {cat:'Artifacts & Commitments',q:'What is the commitment associated with the Sprint Backlog?',o:['Product Goal','Sprint Goal','Definition of Done','Release Plan'],a:1,e:'The Sprint Goal is the commitment for the Sprint Backlog.'},
+  {cat:'Artifacts & Commitments',q:'What is the commitment associated with the Increment?',o:['Product Goal','Sprint Goal','Definition of Done','Acceptance Criteria'],a:2,e:'The Definition of Done is the commitment for the Increment.'},
+  {cat:'Artifacts & Commitments',q:'What is an Increment?',o:['A release to production','A concrete stepping stone toward the Product Goal that is usable','A feature set','A Sprint deliverable report'],a:1,e:'An Increment is a concrete stepping stone toward the Product Goal; it must be usable whether or not it is released.'},
+  {cat:'Artifacts & Commitments',q:'Who creates the Definition of Done?',o:['Product Owner','Scrum Master','The Scrum Team (or organisation if one exists)','Developers only'],a:2,e:'If the organisation has no DoD standard, the Scrum Team creates it. Otherwise, teams must comply with the organisational standard.'},
+  {cat:'Artifacts & Commitments',q:'What does the Sprint Backlog consist of?',o:['All Product Backlog items','Sprint Goal + selected PBIs + a plan for delivery','Only completed user stories','The team\'s task list for the week'],a:1,e:'The Sprint Backlog = Sprint Goal + selected Product Backlog items + a plan for delivering the Increment.'},
+  {cat:'Artifacts & Commitments',q:'Can a Developer release an Increment that does not meet the Definition of Done?',o:['Yes, with PO approval','Yes, in an emergency','No','Yes, if stakeholders accept it'],a:2,e:'An Increment that does not meet the Definition of Done may not be released or presented at Sprint Review.'},
+  {cat:'Artifacts & Commitments',q:'Can there be multiple Increments in a single Sprint?',o:['No — only one','Yes','Only with PO approval','Only in multi-team Scrum'],a:1,e:'Multiple Increments may be created within a Sprint. They are all presented at the Sprint Review.'},
+  {cat:'Artifacts & Commitments',q:'What is the Product Goal?',o:['The revenue target for the product','A future state of the product — the long-term objective','The features planned for the next release','The team\'s OKR'],a:1,e:'The Product Goal describes a future state of the product and serves as the long-term objective for the Scrum Team.'},
+  {cat:'Artifacts & Commitments',q:'Who orders the Product Backlog?',o:['Scrum Master','Developers','Stakeholders','Product Owner'],a:3,e:'The Product Owner is responsible for ordering the Product Backlog to maximise value.'},
+
+  // SCRUM TEAM ACCOUNTABILITIES
+  {cat:'Scrum Team',q:'Who are the members of a Scrum Team?',o:['PM, BA, Developers','Product Owner, Scrum Master, Developers','Scrum Master, Developers, Stakeholders','Product Owner, Developers, QA'],a:1,e:'A Scrum Team consists of one Product Owner, one Scrum Master, and Developers.'},
+  {cat:'Scrum Team',q:'How many Product Owners can a Scrum Team have?',o:['One per product area','Two','One','As many as needed'],a:2,e:'A Scrum Team has exactly one Product Owner. The PO may represent stakeholder interests but is one person.'},
+  {cat:'Scrum Team',q:'Who is accountable for creating a valuable, useful Increment?',o:['Product Owner','Scrum Master','Developers','The entire Scrum Team'],a:2,e:'Developers are accountable for creating a Done Increment each Sprint.'},
+  {cat:'Scrum Team',q:'What is the Scrum Master accountable for?',o:['Project delivery','Product value','Scrum adoption and team effectiveness','Resource allocation'],a:2,e:'The Scrum Master is accountable for establishing Scrum and team effectiveness.'},
+  {cat:'Scrum Team',q:'Who removes impediments for the Developers?',o:['Product Owner','Project Manager','Scrum Master','Team Lead'],a:2,e:'The Scrum Master causes the removal of impediments to the Scrum Team\'s progress.'},
+  {cat:'Scrum Team',q:'What is the Scrum Master\'s leadership style?',o:['Command and control','Servant leader','Technical lead','Agile coach only'],a:1,e:'The Scrum Master is a servant leader who serves the Scrum Team and the organisation.'},
+  {cat:'Scrum Team',q:'Who participates in Sprint Planning?',o:['Developers only','Product Owner and Developers','Entire Scrum Team','Scrum Master and Developers'],a:2,e:'The entire Scrum Team participates in Sprint Planning.'},
+  {cat:'Scrum Team',q:'What does the Scrum Master do if someone outside the team tries to direct the Developers?',o:['Allows it if appropriate','Reports it to management','Protects the team and redirects through proper channels','Asks the PO to decide'],a:2,e:'The Scrum Master protects the Scrum Team from outside interference and distractions.'},
+
+  // AGILE MANIFESTO & PRINCIPLES
+  {cat:'Agile Principles',q:'How many values are in the Agile Manifesto?',o:['3','4','5','12'],a:1,e:'The Agile Manifesto has four values.'},
+  {cat:'Agile Principles',q:'How many principles are in the Agile Manifesto?',o:['4','8','10','12'],a:3,e:'The Agile Manifesto has twelve principles.'},
+  {cat:'Agile Principles',q:'What is the primary measure of progress in Agile?',o:['Sprint velocity','Customer satisfaction','Working software','Completed tasks'],a:2,e:'Working software is the primary measure of progress, per the Agile Manifesto.'},
+  {cat:'Agile Principles',q:'What does the Agile value "Responding to change over following a plan" mean?',o:['Plans should be abandoned','Adapting to change is more valuable than rigidly following a plan','Change requests need no process','Planning is unnecessary'],a:1,e:'Agile values the ability to adapt to change, while acknowledging that planning still has value.'},
+  {cat:'Agile Principles',q:'Which Agile principle states "Welcome changing requirements, even late in development"?',o:['Principle 1','Principle 2','Principle 5','Principle 10'],a:1,e:'Agile Principle 2: Welcome changing requirements, even late in development, for the customer\'s competitive advantage.'},
+  {cat:'Agile Principles',q:'What does "sustainable pace" mean in Agile?',o:['Sprints should be shorter','The team works at a pace they can maintain indefinitely','Overtime is acceptable','Velocity should increase each Sprint'],a:1,e:'Agile promotes sustainable development — the team should be able to maintain a constant pace indefinitely.'},
+  {cat:'Agile Principles',q:'What does "Simplicity — the art of maximising the amount of work not done" mean?',o:['Do as little as possible','Focus only on what delivers value; avoid unnecessary work','Avoid documentation','Only build features the PO requests'],a:1,e:'Simplicity means doing only what is needed to deliver value and avoiding wasteful work.'},
+  {cat:'Agile Principles',q:'What type of communication does Agile prefer?',o:['Written documentation','Email chains','Face-to-face conversation','Formal reports'],a:2,e:'Agile Principle 6: The most efficient method of conveying information is face-to-face conversation.'},
+  {cat:'Agile Principles',q:'How often should working software be delivered in Agile?',o:['Once a year','Quarterly','Frequently, from a couple of weeks to a couple of months','Only at project end'],a:2,e:'Agile Principle 3: Deliver working software frequently, preferring shorter timescales.'},
+  {cat:'Agile Principles',q:'What does the Agile Manifesto value "Individuals and interactions" over?',o:['Processes and tools','Comprehensive documentation','Contract negotiation','Following a plan'],a:0,e:'Agile Manifesto Value 1: Individuals and interactions over processes and tools.'},
+  {cat:'Agile Principles',q:'What does "customer collaboration over contract negotiation" mean?',o:['Contracts are unimportant','Working closely with the customer delivers more value than formal contracts','Customers write the contracts','Negotiation is banned'],a:1,e:'Agile values ongoing customer collaboration to build the right product, rather than relying solely on contract terms.'},
+  {cat:'Agile Principles',q:'Technical excellence and good design enhance:',o:['Team morale','Project cost','Agility','Documentation quality'],a:2,e:'Agile Principle 9: Continuous attention to technical excellence and good design enhances agility.'},
+
+  // PRODUCT OWNER
+  {cat:'Product Owner',q:'Who is responsible for maximising the value of the product?',o:['Scrum Master','Developers','Product Owner','Stakeholders'],a:2,e:'The Product Owner is accountable for maximising the value of the product.'},
+  {cat:'Product Owner',q:'Can the Product Owner delegate Product Backlog management to others?',o:['Never','Yes, but the PO remains accountable','Yes, and accountability transfers too','Only to the Scrum Master'],a:1,e:'The PO may delegate backlog management work but retains accountability for it.'},
+  {cat:'Product Owner',q:'Who represents stakeholder interests in Scrum?',o:['Scrum Master','Project Sponsor','Product Owner','Business Analyst'],a:2,e:'The Product Owner represents stakeholder interests and manages their expectations.'},
+  {cat:'Product Owner',q:'Can stakeholders directly change the Sprint Backlog?',o:['Yes at any time','Yes with Scrum Master approval','No — they work through the Product Owner','Yes in Sprint Review'],a:2,e:'Stakeholders cannot directly change the Sprint Backlog; they must work through the Product Owner.'},
+  {cat:'Product Owner',q:'Is the Product Owner a committee or an individual?',o:['A committee of stakeholders','One person','Two people — business and technical','A rotating role'],a:1,e:'The Product Owner is always one person, not a committee, to ensure clear decision-making.'},
+  {cat:'Product Owner',q:'What is the Product Owner\'s role in Sprint Review?',o:['Facilitate the review','Evaluate team performance','Present the Product Backlog state and decide future direction','Write the review report'],a:2,e:'The PO presents the current state of the Product Backlog and decides what to do next based on stakeholder input.'},
+  {cat:'Product Owner',q:'Who decides what goes into a Sprint?',o:['Product Owner alone','Scrum Master','Developers select items from the PO-ordered backlog','Management'],a:2,e:'Developers select items from the Product Backlog for the Sprint, based on the PO\'s priority ordering.'},
+  {cat:'Product Owner',q:'What happens if stakeholders disagree with Product Backlog ordering?',o:['They can override the PO','They raise it with the Scrum Master','They must convince the Product Owner','The team votes'],a:2,e:'Those who wish to change the backlog ordering must convince the Product Owner, who makes the final call.'},
+  {cat:'Product Owner',q:'Must the Product Owner attend the Daily Scrum?',o:['Always','Never','Only if they are also a Developer','Only on Mondays'],a:2,e:'The PO attends the Daily Scrum only if they are also a Developer; otherwise it is not required.'},
+  {cat:'Product Owner',q:'What skill is most important for a Product Owner?',o:['Technical coding skills','Stakeholder management and product vision','Project scheduling','Scrum facilitation'],a:1,e:'A PO must understand the product, stakeholders, and market — and communicate a clear product vision.'},
+
+  // SCRUM MASTER
+  {cat:'Scrum Master',q:'The Scrum Master serves the organisation by:',o:['Approving budgets','Leading, training, and coaching Scrum adoption','Managing team performance','Writing project plans'],a:1,e:'The Scrum Master leads, trains, and coaches the organisation in Scrum adoption.'},
+  {cat:'Scrum Master',q:'What does the Scrum Master do during the Daily Scrum?',o:['Facilitates and asks the three questions','Runs the meeting and takes notes','Ensures it happens; Developers run it','Reports to management on blockers'],a:2,e:'The SM ensures the Daily Scrum happens; the Developers are responsible for conducting it.'},
+  {cat:'Scrum Master',q:'How does the Scrum Master handle a manager who tells Developers what to do?',o:['Follows the manager\'s instructions','Escalates to HR','Coaches the manager on Scrum and protects the team','Asks the PO to intervene'],a:2,e:'The SM coaches those outside the team on how to interact with it, protecting the team\'s self-management.'},
+  {cat:'Scrum Master',q:'Can the Scrum Master tell Developers how to build a feature?',o:['Yes, they are the technical lead','Yes, if asked','No — Developers self-manage their technical work','Only in an emergency'],a:2,e:'Developers self-manage their work. The SM coaches but does not direct technical decisions.'},
+  {cat:'Scrum Master',q:'What is the SM\'s responsibility regarding Scrum events?',o:['Run all events','Ensure events take place, are productive, and timeboxed','Attend as an observer only','Schedule but not facilitate events'],a:1,e:'The SM ensures all Scrum events take place, are positive, productive, and kept within the timebox.'},
+
+  // ESTIMATION & PLANNING
+  {cat:'Estimation & Planning',q:'Why are Fibonacci numbers used in Planning Poker?',o:['They are easy to remember','Gaps between numbers reflect uncertainty — larger items are harder to estimate precisely','They map to hours directly','They were mandated by the Agile Manifesto'],a:1,e:'Fibonacci gaps grow larger as numbers increase, reflecting that larger items carry proportionally more uncertainty.'},
+  {cat:'Estimation & Planning',q:'What does velocity measure?',o:['How fast developers type','The amount of work a team completes per Sprint','Customer satisfaction','Code quality'],a:1,e:'Velocity is the amount of work (typically in story points) a team completes in a Sprint.'},
+  {cat:'Estimation & Planning',q:'What do story points measure?',o:['Hours of work','Relative effort, complexity, and uncertainty','Lines of code','Business value'],a:1,e:'Story points are a relative measure of effort, complexity, and uncertainty — not direct hours.'},
+  {cat:'Estimation & Planning',q:'What is the purpose of a Sprint Burndown chart?',o:['Track budget spend','Track remaining work versus time in the Sprint','Show team velocity history','Plan the next Sprint'],a:1,e:'A burndown chart shows how much work remains versus how much time is left in the Sprint.'},
+  {cat:'Estimation & Planning',q:'In Planning Poker, when should cards be revealed?',o:['One at a time, starting with the most senior','All at the same time','After 5 minutes of discussion','When the Scrum Master says so'],a:1,e:'All cards are revealed simultaneously to avoid anchoring bias.'},
+  {cat:'Estimation & Planning',q:'What does a story point estimate of 40 indicate?',o:['The task takes 40 hours','The item is fully understood','The item is too large and must be broken up','Extra Large effort'],a:2,e:'A 40-point item signals danger — there is not enough information to plan or complete it; it needs decomposition.'},
+  {cat:'Estimation & Planning',q:'What is capacity planning in Sprint Planning?',o:['Buying more servers','Considering team availability and capability when selecting PBIs','Calculating story points','Defining acceptance criteria'],a:1,e:'Capacity planning considers each Developer\'s availability (holidays, other commitments) when selecting Sprint work.'},
+  {cat:'Estimation & Planning',q:'What is the Definition of Ready?',o:['An official Scrum artefact','Criteria that an Increment must meet','Criteria a PBI should meet before being selected for a Sprint (common practice, not in the Scrum Guide)','A synonym for Definition of Done'],a:2,e:'The Definition of Ready is a common practice — not in the Scrum Guide — describing when a PBI is sufficiently understood to be selected.'},
+];
+
+const QUIZ_Q_PER_SESSION=10;
+const BADGE_EXPIRY_DAYS=7;
+let quizSession={questions:[],current:0,answers:[],active:false};
+
+function getBadgeData(){return ld(K.quizBadge,{level:null,earnedDate:null,expiryDate:null,streak:0,totalSessions:0,totalCorrect:0});}
+function getQuizHistory(){return ld(K.quizHistory,[]);}
+
+function badgeDaysLeft(expiryDate){
+  if(!expiryDate)return -1;
+  return Math.ceil((new Date(expiryDate)-new Date())/864e5);
+}
+
+function badgeForScore(correct,total){
+  const pct=correct/total;
+  if(pct>=0.9)return'gold';
+  if(pct>=0.7)return'silver';
+  if(pct>=0.5)return'bronze';
+  return null;
+}
+
+const BADGE_CONFIG={
+  gold:{icon:'🥇',label:'Gold Badge',color:'#b8860b',desc:'90%+ correct'},
+  silver:{icon:'🥈',label:'Silver Badge',color:'#607d8b',desc:'70%+ correct'},
+  bronze:{icon:'🥉',label:'Bronze Badge',color:'#8d4e10',desc:'50%+ correct'},
+};
+
+function renderQuizTab(){
+  renderBadgePanel();
+  renderQuizStats();
+  renderQuizHistory();
+  // Reset to start screen if no active session
+  if(!quizSession.active){
+    document.getElementById('quiz-start').style.display='block';
+    document.getElementById('quiz-question-area').style.display='none';
+    document.getElementById('quiz-result-area').style.display='none';
+  }
+}
+
+function renderBadgePanel(){
+  const el=document.getElementById('quiz-badge-panel');if(!el)return;
+  const b=getBadgeData();
+  const daysLeft=badgeDaysLeft(b.expiryDate);
+
+  if(!b.level){
+    el.innerHTML=`<div style="padding:20px">
+      <div style="font-size:3em;margin-bottom:8px">🎖️</div>
+      <div style="font-weight:700;font-size:1.1em;margin-bottom:6px">No Badge Yet</div>
+      <p class="text-muted">Complete a quiz session to earn your first badge.</p>
+    </div>`;
+    return;
+  }
+
+  const cfg=BADGE_CONFIG[b.level];
+  let expiryHtml='';
+  if(daysLeft>3) expiryHtml=`<span class="badge-expiry ok">✅ Valid for ${daysLeft} more day${daysLeft!==1?'s':''}</span>`;
+  else if(daysLeft>0) expiryHtml=`<span class="badge-expiry warn">⚠️ Expires in ${daysLeft} day${daysLeft!==1?'s':''} — do a session!</span>`;
+  else expiryHtml=`<span class="badge-expiry expired">❌ Expired — complete a session to renew</span>`;
+
+  el.innerHTML=`<div class="badge-display badge-${b.level}">
+    <div class="badge-icon">${cfg.icon}</div>
+    <div class="badge-label">${cfg.label}</div>
+    <div class="badge-sublabel">${cfg.desc}</div>
+    <div>${expiryHtml}</div>
+    ${b.streak>1?`<div style="margin-top:8px;font-size:.82em;color:var(--text-muted)">🔥 ${b.streak}-week streak</div>`:''}
+  </div>`;
+}
+
+function renderQuizStats(){
+  const el=document.getElementById('quiz-stats-panel');if(!el)return;
+  const b=getBadgeData();
+  const history=getQuizHistory();
+  const avgScore=history.length?Math.round(history.reduce((s,h)=>s+(h.correct/h.total*100),0)/history.length):0;
+  el.innerHTML=`
+    <div class="grid-2" style="gap:10px;margin-bottom:10px">
+      <div class="card-gradient" style="padding:12px"><div class="value" style="font-size:1.5em">${b.totalSessions||0}</div><div class="label">Sessions</div></div>
+      <div class="card-gradient" style="padding:12px"><div class="value" style="font-size:1.5em">${b.totalCorrect||0}</div><div class="label">Correct</div></div>
+    </div>
+    <div class="grid-2" style="gap:10px">
+      <div class="card-gradient" style="padding:12px"><div class="value" style="font-size:1.5em">${avgScore}%</div><div class="label">Avg Score</div></div>
+      <div class="card-gradient" style="padding:12px"><div class="value" style="font-size:1.5em">${b.streak||0}</div><div class="label">Streak 🔥</div></div>
+    </div>`;
+}
+
+function renderQuizHistory(){
+  const el=document.getElementById('quiz-history-list');if(!el)return;
+  const history=getQuizHistory().slice().reverse().slice(0,10);
+  if(!history.length){el.innerHTML='<p class="empty-state">No sessions yet.</p>';return;}
+  el.innerHTML=history.map(h=>{
+    const cfg=h.badge?BADGE_CONFIG[h.badge]:null;
+    const pct=Math.round(h.correct/h.total*100);
+    return `<div class="flex-between" style="padding:9px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:.85em;color:var(--text-muted)">${h.date}</span>
+      <span style="font-size:.88em;font-weight:600">${h.correct}/${h.total} correct (${pct}%)</span>
+      <span>${cfg?cfg.icon+'&nbsp;'+cfg.label:'No badge'}</span>
+    </div>`;
+  }).join('');
+}
+
+function startQuiz(){
+  // Shuffle and pick QUIZ_Q_PER_SESSION questions
+  const shuffled=[...QUIZ_BANK].sort(()=>Math.random()-.5);
+  quizSession={questions:shuffled.slice(0,QUIZ_Q_PER_SESSION),current:0,answers:[],active:true};
+  document.getElementById('quiz-start').style.display='none';
+  document.getElementById('quiz-result-area').style.display='none';
+  document.getElementById('quiz-question-area').style.display='block';
+  showQuestion();
+}
+
+function showQuestion(){
+  const el=document.getElementById('quiz-question-area');
+  const q=quizSession.questions[quizSession.current];
+  const idx=quizSession.current;
+  const total=quizSession.questions.length;
+
+  const dots=quizSession.questions.map((_,i)=>{
+    let cls='quiz-progress-dot';
+    if(i<idx) cls+=' '+(quizSession.answers[i]===quizSession.questions[i].a?'correct':'wrong');
+    else if(i===idx) cls+=' current';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+
+  el.innerHTML=`
+    <div class="quiz-progress">${dots}</div>
+    <div style="text-align:right;font-size:.8em;color:var(--text-muted);margin-bottom:10px">Question ${idx+1} of ${total}</div>
+    <div class="quiz-cat">${q.cat}</div>
+    <div class="quiz-question">${san(q.q)}</div>
+    <div class="quiz-options" id="quiz-opts">
+      ${q.o.map((opt,i)=>`<button class="quiz-option" id="qopt-${i}" onclick="answerQuestion(${i})">${san(opt)}</button>`).join('')}
+    </div>
+    <div id="quiz-explain" style="display:none" class="quiz-explain"></div>
+    <div id="quiz-next-btn" style="display:none;text-align:right;margin-top:14px">
+      <button class="btn btn-primary" onclick="nextQuestion()">${idx+1<total?'Next Question →':'See Results'}</button>
+    </div>`;
+}
+
+function answerQuestion(chosen){
+  const q=quizSession.questions[quizSession.current];
+  quizSession.answers.push(chosen);
+  // Disable all options
+  q.o.forEach((_,i)=>{
+    const btn=document.getElementById('qopt-'+i);
+    if(!btn)return;
+    btn.disabled=true;
+    if(i===q.a) btn.classList.add(chosen===q.a?'correct':'reveal-correct');
+    else if(i===chosen) btn.classList.add('wrong');
+  });
+  // Show explanation
+  const expEl=document.getElementById('quiz-explain');
+  expEl.style.display='block';
+  expEl.innerHTML=(chosen===q.a?'✅ <strong>Correct!</strong> ':'❌ <strong>Incorrect.</strong> ')+san(q.e);
+  document.getElementById('quiz-next-btn').style.display='block';
+}
+
+function nextQuestion(){
+  quizSession.current++;
+  if(quizSession.current>=quizSession.questions.length){
+    showResult();
+  } else {
+    showQuestion();
+  }
+}
+
+function showResult(){
+  document.getElementById('quiz-question-area').style.display='none';
+  const el=document.getElementById('quiz-result-area');
+  el.style.display='block';
+
+  const correct=quizSession.answers.filter((a,i)=>a===quizSession.questions[i].a).length;
+  const total=quizSession.questions.length;
+  const pct=Math.round(correct/total*100);
+  const badgeLevel=badgeForScore(correct,total);
+  const cfg=badgeLevel?BADGE_CONFIG[badgeLevel]:null;
+
+  // Save badge & history
+  const now=new Date();
+  const b=getBadgeData();
+  const lastDate=b.earnedDate?new Date(b.earnedDate):null;
+  const daysSinceLast=lastDate?Math.floor((now-lastDate)/864e5):999;
+  const newStreak=daysSinceLast<=8?((b.streak||0)+1):1;
+
+  const expiry=new Date(now);expiry.setDate(expiry.getDate()+BADGE_EXPIRY_DAYS);
+
+  const newBadge={
+    level:badgeLevel||b.level,
+    earnedDate:now.toISOString(),
+    expiryDate:badgeLevel?expiry.toISOString():b.expiryDate,
+    streak:newStreak,
+    totalSessions:(b.totalSessions||0)+1,
+    totalCorrect:(b.totalCorrect||0)+correct,
+  };
+  sv(K.quizBadge,newBadge);
+
+  const history=getQuizHistory();
+  history.push({date:now.toLocaleDateString(),correct,total,badge:badgeLevel,pct});
+  sv(K.quizHistory,history.slice(-50));
+
+  quizSession.active=false;
+
+  const missedHtml=quizSession.questions
+    .map((q,i)=>quizSession.answers[i]!==q.a?`<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:.85em"><strong>Q:</strong> ${san(q.q)}<br><span style="color:var(--danger)">Your answer: ${san(q.o[quizSession.answers[i]])}</span><br><span style="color:var(--success)">Correct: ${san(q.o[q.a])}</span></div>`:'')
+    .filter(Boolean).join('');
+
+  el.innerHTML=`
+    <div class="quiz-result-card">
+      <div class="quiz-result-score">${correct}/${total}</div>
+      <div style="font-size:2em;margin:8px 0">${cfg?cfg.icon:'😔'}</div>
+      <div class="quiz-result-label">${cfg?cfg.label:'Keep practising!'}</div>
+      <div class="text-muted">${pct}% correct · ${badgeLevel?'Badge earned!':'Score 50%+ to earn a badge'}</div>
+      <div class="quiz-streak">🔥 ${newStreak}-week streak</div>
+      <div class="flex-wrap" style="justify-content:center;margin-top:16px">
+        <button class="btn btn-primary" onclick="startQuiz()">🔄 Try Again</button>
+        <button class="btn btn-outline" onclick="renderQuizTab()">📊 View Stats</button>
+      </div>
+    </div>
+    ${missedHtml?`<div class="section mt-16"><div class="section-header"><h3>📖 Review Missed Questions</h3></div>${missedHtml}</div>`:''}`;
+
+  renderBadgePanel();
+  renderQuizStats();
+  renderQuizHistory();
+}
+
+// Dashboard badge widget helper
+function getDashBadgeHtml(){
+  const b=getBadgeData();
+  if(!b.level) return `<div class="dash-badge-mini"><div class="mini-icon">🎖️</div><div class="mini-info"><div class="mini-name">No badge yet</div><div class="mini-sub">Complete a Quiz Me session</div></div><button class="quick-btn" onclick="switchTab('quiz')" style="font-size:.78em;padding:5px 10px">Start →</button></div>`;
+  const cfg=BADGE_CONFIG[b.level];
+  const daysLeft=badgeDaysLeft(b.expiryDate);
+  const sub=daysLeft>0?`Valid for ${daysLeft} more day${daysLeft!==1?'s':''}`:`Expired — renew now!`;
+  const subColor=daysLeft<=3?'var(--danger)':'var(--text-muted)';
+  return `<div class="dash-badge-mini"><div class="mini-icon">${cfg.icon}</div><div class="mini-info"><div class="mini-name">${cfg.label}</div><div class="mini-sub" style="color:${subColor}">${sub}</div></div><button class="quick-btn" onclick="switchTab('quiz')" style="font-size:.78em;padding:5px 10px">${daysLeft<=3?'Renew →':'Quiz →'}</button></div>`;
 }
 
 // ── UTILITIES ──
