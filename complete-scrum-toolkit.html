@@ -334,7 +334,10 @@ textarea{resize:vertical;min-height:76px}
       <button class="tab-btn" data-tab="priority">⚡ Priority Board</button>
       <button class="tab-btn" data-tab="quiz">🧠 Quiz Me</button>
 
-      <div class="sidebar-footer">2020 Scrum Guide &bull; All data local</div>
+      <div style="margin-top:auto;padding-top:10px;border-top:1px solid rgba(255,255,255,.12)">
+        <button class="tab-btn" style="width:100%;justify-content:center;background:rgba(74,158,255,.15);border:1px solid rgba(74,158,255,.25);color:var(--primary);font-weight:700" onclick="quickSaveSprint()">💾 Save Sprint</button>
+      </div>
+      <div class="sidebar-footer" style="margin-top:8px">2020 Scrum Guide &bull; All data local</div>
     </aside>
 
     <!-- ── MAIN AREA ── -->
@@ -410,6 +413,37 @@ textarea{resize:vertical;min-height:76px}
           <canvas id="velocity-canvas" style="width:100%;height:110px"></canvas>
           <p class="text-muted mt-8">Last 5 completed sprints. Archive a sprint to record velocity.</p>
           <button class="btn btn-sm btn-secondary mt-8" onclick="archiveCurrentSprint()">📦 Archive Sprint &amp; Start Next</button>
+        </div>
+
+        <!-- SPRINT LIBRARY -->
+        <div class="section mt-16" style="border-top:2px solid var(--border);padding-top:20px">
+          <div class="section-header">
+            <h3>💾 Sprint Library</h3>
+            <span class="text-muted" style="font-size:.8em">Save &amp; load full sprint snapshots</span>
+          </div>
+          <p class="text-muted mb-12" style="font-size:.84em">Snapshots include sprint setup, backlog, daily entries, impediments, review, retrospective, and velocity. Saved as JSON files to your device — nothing is sent anywhere.</p>
+          <div class="flex-gap mb-12" style="flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="saveSprint()">💾 Save to File</button>
+            <label class="btn btn-outline" style="cursor:pointer">
+              📂 Load from File
+              <input type="file" id="sprint-file-input" accept=".json" style="display:none" onchange="previewSprintFile(this)">
+            </label>
+          </div>
+          <div id="sprint-import-preview" style="display:none;background:var(--card-bg);border:2px solid var(--primary);border-radius:var(--radius);padding:16px;margin-bottom:14px">
+            <h4 style="color:var(--primary);margin-bottom:10px">📋 Snapshot Preview</h4>
+            <div id="sprint-import-details" style="margin-bottom:14px;font-size:.88em"></div>
+            <div class="flex-gap">
+              <button class="btn btn-danger" onclick="confirmLoadSprint()">⚠️ Load &amp; Replace Current Data</button>
+              <button class="btn btn-outline" onclick="cancelSprintLoad()">Cancel</button>
+            </div>
+            <p class="text-muted mt-8" style="font-size:.78em">⚠️ This will overwrite your current sprint, backlog, retro, and all other data.</p>
+          </div>
+          <div class="section-header mt-12">
+            <h4 style="color:var(--secondary)">📁 Quick Saves (in-browser)</h4>
+            <button class="btn btn-sm btn-outline" onclick="saveSprintSlot()">+ Quick Save</button>
+          </div>
+          <p class="text-muted mb-8" style="font-size:.8em">Up to 5 slots — stored in this browser only. Good for switching between sprints on the same device.</p>
+          <div id="sprint-slots-list"></div>
         </div>
       </div>
 
@@ -954,7 +988,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 
 function onTab(t){
   if(t==='home'){renderDashboard();}
-  if(t==='hub'){drawBurndown();drawVelocity();}
+  if(t==='hub'){drawBurndown();drawVelocity();renderSprintSlots();}
   if(t==='planning'){renderBacklogList();updateCapacityBar();updatePlanningTimebox();}
   if(t==='daily'){renderMembers();renderImpediments();}
   if(t==='review'){renderReviewItems();renderAttendees();updateReviewTimebox();}
@@ -2032,6 +2066,142 @@ function getDashBadgeHtml(){
   return `<div class="dash-badge-mini"><div class="mini-icon">${cfg.icon}</div><div class="mini-info"><div class="mini-name">${cfg.label}</div><div class="mini-sub" style="color:${subColor}">${sub}</div></div><button class="quick-btn" onclick="switchTab('quiz')" style="font-size:.78em;padding:5px 10px">${daysLeft<=3?'Renew →':'Quiz →'}</button></div>`;
 }
 
+// ── SPRINT LIBRARY ──
+const SPRINT_KEYS=['scrum_sprint','scrum_planning','scrum_daily','scrum_review','scrum_retro','scrum_members','scrum_impediments','scrum_attendees','scrum_velocity'];
+const SPRINT_SLOTS_KEY='scrum_sprint_slots';
+let pendingImport=null;
+
+function collectSprintSnapshot(){
+  const data={};
+  SPRINT_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v)data[k]=JSON.parse(v);});
+  const sprint=data['scrum_sprint']||{};
+  return{version:'1.0',exportedAt:new Date().toISOString(),sprintNumber:sprint.number||'?',sprintGoal:sprint.goal||'',data};
+}
+
+function saveSprint(){
+  const snap=collectSprintSnapshot();
+  const name='sprint-'+snap.sprintNumber+'-'+new Date().toISOString().slice(0,10)+'.json';
+  dlFile(JSON.stringify(snap,null,2),name,'application/json');
+}
+
+function quickSaveSprint(){
+  const snap=collectSprintSnapshot();
+  const name='sprint-'+snap.sprintNumber+'-'+new Date().toISOString().slice(0,10)+'.json';
+  dlFile(JSON.stringify(snap,null,2),name,'application/json');
+}
+
+function previewSprintFile(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const snap=JSON.parse(e.target.result);
+      if(!snap.version||!snap.data)throw new Error('Invalid snapshot format.');
+      pendingImport=snap;
+      const sprint=snap.data['scrum_sprint']||{};
+      const planning=snap.data['scrum_planning']||[];
+      const retro=snap.data['scrum_retro']||{ww:[],ti:[],ai:[]};
+      const imps=snap.data['scrum_impediments']||[];
+      document.getElementById('sprint-import-details').innerHTML=`
+        <div class="grid-2" style="gap:8px;margin-bottom:10px">
+          <div style="background:var(--bg-medium);border-radius:8px;padding:10px">
+            <div style="font-size:.75em;color:var(--text-muted)">Sprint</div>
+            <div style="font-weight:700;color:var(--primary)">#${sprint.number||'?'}</div>
+          </div>
+          <div style="background:var(--bg-medium);border-radius:8px;padding:10px">
+            <div style="font-size:.75em;color:var(--text-muted)">Saved</div>
+            <div style="font-weight:700">${new Date(snap.exportedAt).toLocaleDateString()}</div>
+          </div>
+          <div style="background:var(--bg-medium);border-radius:8px;padding:10px">
+            <div style="font-size:.75em;color:var(--text-muted)">Backlog Items</div>
+            <div style="font-weight:700">${planning.length}</div>
+          </div>
+          <div style="background:var(--bg-medium);border-radius:8px;padding:10px">
+            <div style="font-size:.75em;color:var(--text-muted)">Impediments</div>
+            <div style="font-weight:700">${imps.length}</div>
+          </div>
+        </div>
+        <div style="background:var(--bg-medium);border-radius:8px;padding:10px;margin-bottom:8px">
+          <div style="font-size:.75em;color:var(--text-muted);margin-bottom:3px">Sprint Goal</div>
+          <div style="font-weight:600">${san(sprint.goal||'(none)')}</div>
+        </div>
+        <div style="font-size:.78em;color:var(--text-muted)">
+          Retro: ${(retro.ww||[]).length} positives · ${(retro.ti||[]).length} improvements · ${(retro.ai||[]).length} actions
+        </div>`;
+      document.getElementById('sprint-import-preview').style.display='block';
+    }catch(err){alert('Could not read file: '+err.message);}
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+function confirmLoadSprint(){
+  if(!pendingImport)return;
+  SPRINT_KEYS.forEach(k=>{
+    if(pendingImport.data[k]!==undefined)sv(k,pendingImport.data[k]);
+    else localStorage.removeItem(k);
+  });
+  pendingImport=null;
+  document.getElementById('sprint-import-preview').style.display='none';
+  // Reload all state
+  SD=ld(K.sprint,{number:1,goal:'',startDate:'',endDate:'',durationWeeks:2,teamSize:5,pointsCommitted:0,pointsDone:0,storiesDone:0,burndown:[]});
+  planningItems=ld(K.planning,[]);
+  members=ld(K.members,[]);
+  dailyEntries=ld(K.daily,{});
+  impediments=ld(K.impediments,[]);
+  attendees=ld(K.attendees,[]);
+  retroData=ld(K.retro,{ww:[],ti:[],ai:[]});
+  initHub();renderSprintSlots();
+  alert('✅ Sprint loaded successfully!');
+}
+
+function cancelSprintLoad(){
+  pendingImport=null;
+  document.getElementById('sprint-import-preview').style.display='none';
+  document.getElementById('sprint-file-input').value='';
+}
+
+// Quick save slots (localStorage, up to 5)
+function saveSprintSlot(){
+  const slots=ld(SPRINT_SLOTS_KEY,[]);
+  if(slots.length>=5){if(!confirm('You have 5 saved slots (the maximum). This will replace the oldest one. Continue?'))return;}
+  const snap=collectSprintSnapshot();
+  snap.savedAt=new Date().toISOString();
+  snap.label='Sprint '+snap.sprintNumber+' — '+(snap.sprintGoal?snap.sprintGoal.slice(0,40)+'...':'No goal');
+  const updated=[snap,...slots].slice(0,5);
+  sv(SPRINT_SLOTS_KEY,updated);
+  renderSprintSlots();
+  alert('✅ Sprint saved to slot.');
+}
+
+function loadSprintSlot(idx){
+  const slots=ld(SPRINT_SLOTS_KEY,[]);
+  const snap=slots[idx];if(!snap)return;
+  if(!confirm('Load "'+snap.label+'"?\n\nThis will overwrite your current sprint data.'))return;
+  pendingImport=snap;
+  confirmLoadSprint();
+}
+
+function deleteSprintSlot(idx){
+  const slots=ld(SPRINT_SLOTS_KEY,[]);
+  slots.splice(idx,1);sv(SPRINT_SLOTS_KEY,slots);renderSprintSlots();
+}
+
+function renderSprintSlots(){
+  const el=document.getElementById('sprint-slots-list');if(!el)return;
+  const slots=ld(SPRINT_SLOTS_KEY,[]);
+  if(!slots.length){el.innerHTML='<p class="text-muted" style="font-size:.83em;padding:8px 0">No quick saves yet. Click "+ Quick Save" above.</p>';return;}
+  el.innerHTML=slots.map((s,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:.88em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${san(s.label||'Sprint '+s.sprintNumber)}</div>
+        <div style="font-size:.75em;color:var(--text-muted)">${new Date(s.savedAt||s.exportedAt).toLocaleString()} &bull; ${(s.data['scrum_planning']||[]).length} backlog items</div>
+      </div>
+      <button class="btn btn-sm btn-primary" onclick="loadSprintSlot(${i})">Load</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteSprintSlot(${i})">✕</button>
+    </div>`).join('');
+}
+
 // ── UTILITIES ──
 function dlFile(content,filename,mime){const blob=new Blob([content],{type:mime});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);}
 
@@ -2042,7 +2212,7 @@ function init(){
   document.getElementById('planning-goal').value=SD.goal||'';
   const rs=ld(K.review,{});if(rs.envChanges)document.getElementById('review-env-changes').value=rs.envChanges;if(rs.backlogNotes)document.getElementById('review-backlog-notes').value=rs.backlogNotes;
   drawBurndown();drawVelocity();updatePlanningTimebox();updateReviewTimebox();updateRetroTimebox();renderTimerPresets();renderSkills();renderSkillsSummary();
-  renderDashboard();
+  renderSprintSlots();renderDashboard();
 }
 window.addEventListener('load',init);
 window.addEventListener('resize',()=>{drawBurndown();drawVelocity();});
