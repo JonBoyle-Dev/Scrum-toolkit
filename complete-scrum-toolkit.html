@@ -475,6 +475,13 @@ textarea{resize:vertical;min-height:76px}
         <h2>🎨 AI Story Generator</h2>
         <div class="api-key-section">
           <label>🔑 Anthropic API Key</label>
+          <p style="color:#92400e;font-size:.83em;margin:6px 0 10px;line-height:1.5">
+            The Story Generator analyses your UI screenshots using Claude AI. Because this app runs entirely in your browser with no backend server, it connects to the Anthropic API directly — which means you need your own API key.<br><br>
+            Your key is stored only in <strong>your browser's localStorage</strong> and is never sent anywhere except directly to Anthropic.
+            <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" style="color:var(--primary);font-weight:600;display:inline-flex;align-items:center;gap:3px;margin-top:4px">
+              Get a free API key at console.anthropic.com →
+            </a>
+          </p>
           <div class="input-row mt-8">
             <input type="password" id="api-key-input" placeholder="sk-ant-...">
             <button class="btn btn-primary btn-sm" onclick="saveApiKey()">Save Key</button>
