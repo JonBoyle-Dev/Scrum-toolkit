@@ -2,7 +2,7 @@
 
 A fully self-contained, browser-based Scrum toolkit grounded in the **2020 Scrum Guide**.
 
-🌐 **Live:** [jonboyle82.github.io/Scrum-toolkit](https://jonboyle82.github.io/Scrum-toolkit/)
+🌐 **Live:** [jonboyle-dev.github.io/Scrum-toolkit](https://jonboyle-dev.github.io/Scrum-toolkit/)
 
 ---
 
@@ -28,7 +28,7 @@ A fully self-contained, browser-based Scrum toolkit grounded in the **2020 Scrum
 
 ## Usage
 
-**Online:** visit [jonboyle82.github.io/Scrum-toolkit](https://jonboyle82.github.io/Scrum-toolkit/)
+**Online:** visit [jonboyle-dev.github.io/Scrum-toolkit](https://jonboyle-dev.github.io/Scrum-toolkit/)
 
 **Local:** download `complete-scrum-toolkit.html` and open in any modern browser.
 
