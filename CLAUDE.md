@@ -1,7 +1,7 @@
 # Scrum Toolkit
 
 Static web app — single HTML file, no build process, no dependencies.
-Hosted on GitHub Pages: https://jonboyle82.github.io/Scrum-toolkit/
+Hosted on GitHub Pages: https://jonboyle-dev.github.io/Scrum-toolkit/
 
 ## Structure
 ```
